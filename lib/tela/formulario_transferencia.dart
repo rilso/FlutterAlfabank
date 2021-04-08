@@ -1,50 +1,63 @@
 import 'package:flutter/material.dart';
-import '../modulos/transferencia.dart';
+import 'package:flutter_alfabank/componentes/editor.dart';
+import 'package:flutter_alfabank/database/dao/transferencia_dao.dart';
+import 'package:flutter_alfabank/modulos/transferencia.dart';
 
 class FormularioTransferencia extends StatelessWidget {
   final TextEditingController _controladorCampoNumeroConta =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _controladorCampoValor = TextEditingController();
+  final TextEditingController _controladorCampoNome = TextEditingController();
+
+  final TransferenciaDAO _dao = TransferenciaDAO();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Nova transferencia"),
-        backgroundColor: Colors.deepPurple,
-        centerTitle: true,
-      ),
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
-            child: TextField(
-              controller: this._controladorCampoNumeroConta,
-              decoration:
-                  InputDecoration(labelText: "Número Conta", hintText: "0000"),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
-            child: TextField(
-              controller: this._controladorCampoValor,
-              decoration:
-                  InputDecoration(labelText: "valor", hintText: "00.00"),
-            ),
-          ),
-          RaisedButton(
-            onPressed: () {
-              var numeroConta = this._controladorCampoNumeroConta.text;
-              var valor = this._controladorCampoValor.text;
+        appBar: AppBar(
+          title: Text("Nova Transferência"),
+          centerTitle: true,
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Editor(
+                controller: this._controladorCampoNome,
+                rotulo: "Nome",
+                dica: "Nome",
+              ),
+              Editor(
+                controller: this._controladorCampoNumeroConta,
+                rotulo: "Número Conta",
+                dica: "0000",
+                tipoInput: TextInputType.number,
+              ),
+              Editor(
+                controller: this._controladorCampoValor,
+                rotulo: "Valor",
+                dica: "00,00",
+                tipoInput: TextInputType.number,
+              ),
+              RaisedButton(
+                onPressed: () {
+                  var numeroConta = this._controladorCampoNumeroConta.text;
+                  var valor = this._controladorCampoValor.text;
+                  var nome = this._controladorCampoNome.text;
 
-              Transferencia transferencia =
-                  Transferencia(double.tryParse(valor), numeroConta);
-              debugPrint('$transferencia');
-            },
-            child: Text("Confirmar"),
+                  Transferencia transferencia = Transferencia(
+                    valor: double.tryParse(valor),
+                    conta: numeroConta,
+                    nome: nome,
+                  );
+
+                  this._dao.save(transferencia)
+                      .then((id) => Navigator.pop(context, id));
+
+                },
+                child: Text("Confirmar"),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        ));
   }
 }

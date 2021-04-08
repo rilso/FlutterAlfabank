@@ -1,55 +1,66 @@
-import 'package:flutter_alfabank/modulos/transferencia.dart';
 import 'package:flutter/material.dart';
-
-import 'formulario_transferencia.dart';
+import 'package:flutter_alfabank/componentes/progress_circular.dart';
+import 'package:flutter_alfabank/database/dao/transferencia_dao.dart';
+import 'package:flutter_alfabank/tela/formulario_transferencia.dart';
+import 'package:flutter_alfabank/modulos/transferencia.dart';
 import '../componentes/item_transferencia.dart';
 
 class ListaTransferencia extends StatefulWidget {
-  final List<Transferencia> listaTransferencias = List();
 
   @override
   State<StatefulWidget> createState() {
+
     return _ListaTransferenciaState();
   }
 }
 
 class _ListaTransferenciaState extends State<ListaTransferencia> {
+
+  final TransferenciaDAO _dao = TransferenciaDAO();
+
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Lista de Transferências"),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        itemCount: widget.listaTransferencias.length,
-        itemBuilder: (context, indice) {
-          var transferencia = widget.listaTransferencias[indice];
-          return ItemTransferencia(transferencia);
+      body: FutureBuilder <List<Transferencia>> (
+        future: Future.delayed(Duration(seconds: 2)).then((value) => this._dao.findAll()),
+        builder: (context, snapshot) {
+          List<Transferencia> listaTransferencias = snapshot.data;
+
+          switch(snapshot.connectionState) {
+            case ConnectionState.none:
+              break;
+            case ConnectionState.waiting:
+              return ProgressCircular();
+              break;
+            case ConnectionState.active:
+              break;
+            case ConnectionState.done:
+              return ListView.builder(
+                itemCount: listaTransferencias.length,
+                itemBuilder: (context, indice) {
+                  var transferencia = listaTransferencias[indice];
+                  return ItemTransferencia(transferencia);
+                },
+              );
+              break;
+          }
+
+          return Text("Error unkonw!");
         },
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          Future<Transferencia> future =
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-            return FormularioTransferencia();
-          }));
-
-          future.then(
-            (transferenciaRecebida) {
-              if (transferenciaRecebida == null ||
-                  transferenciaRecebida.valor == null ||
-                  transferenciaRecebida.conta == null) {
-                return;
-              }
-
-              setState(
-                () {
-                  widget.listaTransferencias.add(transferenciaRecebida);
-                },
-              );
-            },
+          Future <int> future = Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) {
+                return FormularioTransferencia();
+              })
           );
         },
       ),

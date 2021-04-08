@@ -1,13 +1,12 @@
 import 'package:flutter_alfabank/modulos/cadastro.dart';
-import 'package:flutter_alfabank/tela/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_alfabank/database/dao/cadastro_dao.dart';
 
-class ConfirmarCadastro extends StatelessWidget {
+class Perfil extends StatelessWidget {
 
   final Cadastro cadastro;
 
-  ConfirmarCadastro(this.cadastro);
+  Perfil(this.cadastro);
 
   final CadastroDAO _dao = CadastroDAO();
 
@@ -15,7 +14,7 @@ class ConfirmarCadastro extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Confirmar Cadastro"),
+          title: Text("Perfil"),
           centerTitle: true,
         ),
         body: Column(
@@ -45,20 +44,13 @@ class ConfirmarCadastro extends StatelessWidget {
             ),
             RaisedButton(
               onPressed: () {
-                this._dao.save(this.cadastro).then((id) {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) {
-                      return Home();
-                    }),
-                    ModalRoute.withName('lista_transferencia'),
-                  );
-                });
+                Navigator.pop(context);
               },
-              child: Text("Confirmar"),
+              child: Text("Voltar"),
             ),
           ],
         )
     );
   }
+
 }

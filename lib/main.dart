@@ -1,24 +1,24 @@
-import 'package:flutter_alfabank/tela/formulario_cadastro.dart';
+import 'package:flutter_alfabank/tela/login.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(App()); //MaterialApp
+  runApp(App());
 }
 
-class App extends StatelessWidget{
+class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
     return MaterialApp(
       theme: ThemeData(
-          primaryColor: Colors.deepPurple[700],
-          accentColor: Colors.deepPurple[500],
+          primaryColor: Colors.deepPurple[500],
+          accentColor: Colors.deepPurple[400],
           buttonTheme: ButtonThemeData(
-              buttonColor: Colors.deepPurple[800],
+              buttonColor: Colors.deepPurple[700],
               textTheme: ButtonTextTheme.primary
           )
       ),
-      home: FormularioCadastro(),
+      home: Login(),
     );
   }
 }
